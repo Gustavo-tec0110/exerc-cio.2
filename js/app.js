@@ -1,4 +1,4 @@
-﻿const githubUser = "FlaviaaMenegossi";
+﻿const githubUser = "Gustavo-tec0110";
 
 const avatarEl = document.querySelector("#avatar");
 const nameEl = document.querySelector("#name");

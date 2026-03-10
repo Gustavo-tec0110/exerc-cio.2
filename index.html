@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora VueJS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="app" class="page">
+    <section class="card">
+      <p class="eyebrow">VueJS</p>
+      <h1>Calculadora aritmetica</h1>
+      <p class="subtitle">
+        Insira dois numeros, escolha a operacao e o resultado sera atualizado automaticamente.
+      </p>
+
+      <div class="inputs">
+        <label>
+          Numero 1
+          <input type="number" v-model.number="numeroA">
+        </label>
+
+        <label>
+          Operacao
+          <select v-model="operacao">
+            <option value="+">Somar</option>
+            <option value="-">Subtrair</option>
+            <option value="*">Multiplicar</option>
+            <option value="/">Dividir</option>
+          </select>
+        </label>
+
+        <label>
+          Numero 2
+          <input type="number" v-model.number="numeroB">
+        </label>
+      </div>
+
+      <div class="result">
+        <span>Resultado</span>
+        <strong>{{ resultado }}</strong>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

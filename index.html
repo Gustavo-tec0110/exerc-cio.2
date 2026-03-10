@@ -3,41 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil Github Ajax</title>
+  <title>Exercicio OO com JavaScript</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <main class="page">
-    <section class="profile-card" aria-live="polite">
-      <img id="avatar" class="avatar" alt="Avatar do perfil">
-      <h1 id="name">Carregando...</h1>
-      <p id="username" class="username">@carregando</p>
+    <section class="hero">
+      <p class="eyebrow">Orientacao a Objetos</p>
+      <h1>Gerenciador de frota com classe abstrata, heranca e instancias</h1>
+      <p class="intro">
+        O projeto apresenta uma classe abstrata chamada <strong>Veiculo</strong>, duas classes filhas
+        chamadas <strong>Carro</strong> e <strong>Moto</strong> e tres objetos criados a partir dessas classes.
+      </p>
+    </section>
 
-      <hr>
+    <section class="requirements">
+      <article class="requirement">
+        <span>01</span>
+        <h2>Classe abstrata</h2>
+        <p>Classe base bloqueada para instanciacao direta.</p>
+      </article>
+      <article class="requirement">
+        <span>02</span>
+        <h2>Heranca</h2>
+        <p>Duas subclasses reaproveitam e especializam os dados da classe principal.</p>
+      </article>
+      <article class="requirement">
+        <span>03</span>
+        <h2>Instancias</h2>
+        <p>Tres objetos sao criados e renderizados dinamicamente na tela com JavaScript.</p>
+      </article>
+    </section>
 
-      <div class="stats">
-        <div class="stat">
-          <h2>REPOSITORIOS</h2>
-          <strong id="repos">0</strong>
+    <section class="fleet-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Resultado</p>
+          <h2>Frota cadastrada</h2>
         </div>
-        <div class="stat">
-          <h2>SEGUIDORES</h2>
-          <strong id="followers">0</strong>
-        </div>
-        <div class="stat">
-          <h2>SEGUINDO</h2>
-          <strong id="following">0</strong>
-        </div>
+        <p id="summary" class="summary"></p>
       </div>
 
-      <a id="profile-link" class="btn" href="#" target="_blank" rel="noopener noreferrer">
-        Ver no Github
-      </a>
-
-      <p id="message" class="message"></p>
+      <div id="vehicle-list" class="vehicle-list"></div>
     </section>
   </main>
 

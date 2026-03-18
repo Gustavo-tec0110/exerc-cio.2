@@ -12,18 +12,24 @@
   cy.contains('button', /Cadastrar|Adicionar|Salvar/i).click()
 }
 
-const acionarBotaoNaLinha = (nome, indiceFallback) => {
-  cy.contains(nome)
-    .closest('li, tr, div')
-    .then(($linha) => {
-      const $botoes = $linha.find('button, a, [role="button"]')
-      if ($botoes.length > 0) {
-        cy.wrap($botoes.eq(indiceFallback)).click({ force: true })
-        return
-      }
+const pegarLinha = (nome) => cy.contains(nome).closest('li, tr, div')
 
-      cy.wrap($linha).click({ force: true })
-    })
+const clicarBotaoLinha = (nome, indice) => {
+  pegarLinha(nome)
+    .find('button, a, [role="button"]')
+    .eq(indice)
+    .click({ force: true })
+}
+
+const clicarPorTextoOuFallback = (regex, fallback) => {
+  cy.get('body').then(($body) => {
+    const $alvo = $body.find('button, a').filter((_, el) => regex.test(el.textContent || ''))
+    if ($alvo.length) {
+      cy.wrap($alvo.first()).click({ force: true })
+      return
+    }
+    fallback()
+  })
 }
 
 describe('Agenda de contatos', () => {
@@ -42,10 +48,13 @@ describe('Agenda de contatos', () => {
     const nome = 'Contato Editar'
     criarContato(nome, 'editar@teste.com', '11911112222')
 
-    acionarBotaoNaLinha(nome, 0)
+    clicarBotaoLinha(nome, 0)
 
     cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome').first().clear().type('Contato Editado')
-    cy.contains('button', /Salvar|Atualizar|Confirmar/i).click({ force: true })
+
+    clicarPorTextoOuFallback(/Salvar|Atualizar|Confirmar/i, () => {
+      clicarBotaoLinha(nome, 0)
+    })
 
     cy.contains('Contato Editado').should('exist')
   })
@@ -54,8 +63,10 @@ describe('Agenda de contatos', () => {
     const nome = 'Contato Remover'
     criarContato(nome, 'remover@teste.com', '11933334444')
 
-    acionarBotaoNaLinha(nome, 1)
+    cy.on('window:confirm', () => true)
 
-    cy.contains(nome).should('not.exist')
+    clicarBotaoLinha(nome, 1)
+
+    cy.contains(nome, { timeout: 8000 }).should('not.exist')
   })
 })

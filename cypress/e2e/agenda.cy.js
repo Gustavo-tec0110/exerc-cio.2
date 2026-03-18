@@ -12,6 +12,20 @@
   cy.contains('button', /Cadastrar|Adicionar|Salvar/i).click()
 }
 
+const acionarBotaoNaLinha = (nome, indiceFallback) => {
+  cy.contains(nome)
+    .closest('li, tr, div')
+    .then(($linha) => {
+      const $botoes = $linha.find('button, a, [role="button"]')
+      if ($botoes.length > 0) {
+        cy.wrap($botoes.eq(indiceFallback)).click({ force: true })
+        return
+      }
+
+      cy.wrap($linha).click({ force: true })
+    })
+}
+
 describe('Agenda de contatos', () => {
   beforeEach(() => {
     cy.visit('/')
@@ -28,12 +42,7 @@ describe('Agenda de contatos', () => {
     const nome = 'Contato Editar'
     criarContato(nome, 'editar@teste.com', '11911112222')
 
-    cy.contains(nome)
-      .parentsUntil('body')
-      .parent()
-      .within(() => {
-        cy.contains('button, a', /Editar|Alterar/i).click({ force: true })
-      })
+    acionarBotaoNaLinha(nome, 0)
 
     cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome').first().clear().type('Contato Editado')
     cy.contains('button', /Salvar|Atualizar|Confirmar/i).click({ force: true })
@@ -45,12 +54,7 @@ describe('Agenda de contatos', () => {
     const nome = 'Contato Remover'
     criarContato(nome, 'remover@teste.com', '11933334444')
 
-    cy.contains(nome)
-      .parentsUntil('body')
-      .parent()
-      .within(() => {
-        cy.contains('button, a', /Remover|Excluir|Apagar/i).click({ force: true })
-      })
+    acionarBotaoNaLinha(nome, 1)
 
     cy.contains(nome).should('not.exist')
   })

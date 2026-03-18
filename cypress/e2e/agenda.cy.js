@@ -9,33 +9,20 @@
     .clear()
     .type(telefone)
 
-  cy.contains('button', /Cadastrar|Adicionar|Salvar/i).click()
+  cy.contains('button', /Adicionar|Cadastrar|Salvar/i).click()
 }
 
-const encontrarBotoesContato = (nome) =>
+const encontrarContainerContato = (nome) =>
   cy.get('body').then(($body) => {
-    const $botoes = $body.find('button, a, [role="button"]').filter((_, el) => {
-      const container = el.closest('li, tr, div, section, article')
-      if (!container) return false
-      return container.textContent && container.textContent.includes(nome)
-    })
-
-    if ($botoes.length) {
-      return cy.wrap($botoes)
-    }
-
-    return cy.wrap($body.find('button, a, [role="button"]'))
+    const $candidatos = $body
+      .find('li, tr, div, section, article')
+      .filter((_, el) => el.textContent && el.textContent.includes(nome))
+    return cy.wrap($candidatos.first())
   })
 
-const clicarBotaoContato = (nome, indice) => {
-  encontrarBotoesContato(nome).then(($botoes) => {
-    cy.wrap($botoes.eq(indice)).click({ force: true })
-  })
-}
-
-const salvarEdicao = () => {
-  cy.get('form').first().within(() => {
-    cy.get('button').first().click({ force: true })
+const clicarBotaoContatoPorTexto = (nome, texto) => {
+  encontrarContainerContato(nome).within(() => {
+    cy.contains('button', texto).click({ force: true })
   })
 }
 
@@ -44,34 +31,36 @@ describe('Agenda de contatos', () => {
     cy.visit('/')
   })
 
-  it('deve incluir um contato', () => {
-    const nome = 'Contato Cypress'
-    criarContato(nome, 'cypress@teste.com', '11999998888')
+  it('deve incluir, editar e remover contatos', () => {
+    const contatoEditar = 'Contato Editar'
+    const contatoRemover = 'Contato Remover'
 
-    cy.contains(nome).should('exist')
-  })
+    criarContato(contatoEditar, 'editar@teste.com', '11911112222')
+    criarContato(contatoRemover, 'remover@teste.com', '11933334444')
 
-  it('deve alterar um contato', () => {
-    const nome = 'Contato Editar'
-    criarContato(nome, 'editar@teste.com', '11911112222')
+    cy.contains(contatoEditar).should('exist')
+    cy.contains(contatoRemover).should('exist')
 
-    clicarBotaoContato(nome, 0)
+    clicarBotaoContatoPorTexto(contatoEditar, /EDITAR/i)
 
-    cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome').first().clear().type('Contato Editado')
+    cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome')
+      .first()
+      .clear()
+      .type('Contato Editado')
+    cy.get('input[placeholder*="E-mail"], input[placeholder*="Email"], input[name="email"], input#email')
+      .first()
+      .clear()
+      .type('editado@teste.com')
+    cy.get('input[placeholder*="Telefone"], input[name="telefone"], input#telefone')
+      .first()
+      .clear()
+      .type('11911112222')
 
-    salvarEdicao()
-
+    cy.contains('button', /ADICIONAR|Salvar|Atualizar/i).click()
     cy.contains('Contato Editado').should('exist')
-  })
-
-  it('deve remover um contato', () => {
-    const nome = 'Contato Remover'
-    criarContato(nome, 'remover@teste.com', '11933334444')
 
     cy.on('window:confirm', () => true)
-
-    clicarBotaoContato(nome, 1)
-
-    cy.contains(nome, { timeout: 8000 }).should('not.exist')
+    clicarBotaoContatoPorTexto(contatoRemover, /DELETAR|Excluir|Apagar/i)
+    cy.contains(contatoRemover, { timeout: 8000 }).should('not.exist')
   })
 })

@@ -1,0 +1,12 @@
+﻿{
+  "name": "exercicio-cypress",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "cypress": "^13.6.6"
+  },
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
+  }
+}

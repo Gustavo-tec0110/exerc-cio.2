@@ -61,6 +61,6 @@ describe('Agenda de contatos', () => {
 
     cy.on('window:confirm', () => true)
     clicarBotaoContatoPorTexto(contatoRemover, /DELETAR|Excluir|Apagar/i)
-    cy.contains(contatoRemover, { timeout: 8000 }).should('not.exist')
+    cy.contains(contatoRemover).should('not.exist')
   })
 })

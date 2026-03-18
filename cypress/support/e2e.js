@@ -1,1 +1,0 @@
-﻿// suporte opcional do Cypress

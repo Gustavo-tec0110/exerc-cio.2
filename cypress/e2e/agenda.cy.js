@@ -32,8 +32,10 @@ describe('Agenda de contatos', () => {
   })
 
   it('deve incluir, editar e remover contatos', () => {
-    const contatoEditar = 'Contato Editar'
-    const contatoRemover = 'Contato Remover'
+    const sufixo = Date.now()
+    const contatoEditar = `Contato Editar ${sufixo}`
+    const contatoRemover = `Contato Remover ${sufixo}`
+    const contatoEditado = `Contato Editado ${sufixo}`
 
     criarContato(contatoEditar, 'editar@teste.com', '11911112222')
     criarContato(contatoRemover, 'remover@teste.com', '11933334444')
@@ -46,7 +48,7 @@ describe('Agenda de contatos', () => {
     cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome')
       .first()
       .clear()
-      .type('Contato Editado')
+      .type(contatoEditado)
     cy.get('input[placeholder*="E-mail"], input[placeholder*="Email"], input[name="email"], input#email')
       .first()
       .clear()
@@ -57,10 +59,13 @@ describe('Agenda de contatos', () => {
       .type('11911112222')
 
     cy.contains('button', /ADICIONAR|Salvar|Atualizar/i).click()
-    cy.contains('Contato Editado').should('exist')
+    cy.contains(contatoEditado).should('exist')
 
+    cy.intercept('DELETE', '**/api/contatos*').as('deleteContato')
     cy.on('window:confirm', () => true)
     clicarBotaoContatoPorTexto(contatoRemover, /DELETAR|Excluir|Apagar/i)
-    cy.contains(contatoRemover).should('not.exist')
+    cy.wait('@deleteContato')
+    cy.reload()
+    cy.contains(contatoRemover, { timeout: 10000 }).should('not.exist')
   })
 })

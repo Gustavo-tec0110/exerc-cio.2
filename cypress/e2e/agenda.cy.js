@@ -12,13 +12,23 @@
   cy.contains('button', /Cadastrar|Adicionar|Salvar/i).click()
 }
 
-const pegarLinha = (nome) => cy.contains(nome).closest('li, tr, div')
-
 const clicarBotaoLinha = (nome, indice) => {
-  pegarLinha(nome)
-    .find('button, a, [role="button"]')
-    .eq(indice)
-    .click({ force: true })
+  cy.contains(nome).then(($el) => {
+    const $parents = $el.parents()
+    const $comBotoes = $parents.filter((_, node) =>
+      node.querySelector && node.querySelector('button, a, [role="button"]')
+    )
+
+    if ($comBotoes.length) {
+      cy.wrap($comBotoes.first())
+        .find('button, a, [role="button"]')
+        .eq(indice)
+        .click({ force: true })
+      return
+    }
+
+    cy.get('button, a, [role="button"]').eq(indice).click({ force: true })
+  })
 }
 
 const clicarPorTextoOuFallback = (regex, fallback) => {

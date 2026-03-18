@@ -12,33 +12,30 @@
   cy.contains('button', /Cadastrar|Adicionar|Salvar/i).click()
 }
 
-const clicarBotaoLinha = (nome, indice) => {
-  cy.contains(nome).then(($el) => {
-    const $parents = $el.parents()
-    const $comBotoes = $parents.filter((_, node) =>
-      node.querySelector && node.querySelector('button, a, [role="button"]')
-    )
+const encontrarBotoesContato = (nome) =>
+  cy.get('body').then(($body) => {
+    const $botoes = $body.find('button, a, [role="button"]').filter((_, el) => {
+      const container = el.closest('li, tr, div, section, article')
+      if (!container) return false
+      return container.textContent && container.textContent.includes(nome)
+    })
 
-    if ($comBotoes.length) {
-      cy.wrap($comBotoes.first())
-        .find('button, a, [role="button"]')
-        .eq(indice)
-        .click({ force: true })
-      return
+    if ($botoes.length) {
+      return cy.wrap($botoes)
     }
 
-    cy.get('button, a, [role="button"]').eq(indice).click({ force: true })
+    return cy.wrap($body.find('button, a, [role="button"]'))
+  })
+
+const clicarBotaoContato = (nome, indice) => {
+  encontrarBotoesContato(nome).then(($botoes) => {
+    cy.wrap($botoes.eq(indice)).click({ force: true })
   })
 }
 
-const clicarPorTextoOuFallback = (regex, fallback) => {
-  cy.get('body').then(($body) => {
-    const $alvo = $body.find('button, a').filter((_, el) => regex.test(el.textContent || ''))
-    if ($alvo.length) {
-      cy.wrap($alvo.first()).click({ force: true })
-      return
-    }
-    fallback()
+const salvarEdicao = () => {
+  cy.get('form').first().within(() => {
+    cy.get('button').first().click({ force: true })
   })
 }
 
@@ -58,13 +55,11 @@ describe('Agenda de contatos', () => {
     const nome = 'Contato Editar'
     criarContato(nome, 'editar@teste.com', '11911112222')
 
-    clicarBotaoLinha(nome, 0)
+    clicarBotaoContato(nome, 0)
 
     cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome').first().clear().type('Contato Editado')
 
-    clicarPorTextoOuFallback(/Salvar|Atualizar|Confirmar/i, () => {
-      clicarBotaoLinha(nome, 0)
-    })
+    salvarEdicao()
 
     cy.contains('Contato Editado').should('exist')
   })
@@ -75,7 +70,7 @@ describe('Agenda de contatos', () => {
 
     cy.on('window:confirm', () => true)
 
-    clicarBotaoLinha(nome, 1)
+    clicarBotaoContato(nome, 1)
 
     cy.contains(nome, { timeout: 8000 }).should('not.exist')
   })

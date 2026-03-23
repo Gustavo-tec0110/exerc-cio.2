@@ -1,4 +1,4 @@
-﻿const criarContato = (nome, email, telefone) => {
+const criarContato = (nome, email, telefone) => {
   cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome').first().clear().type(nome)
   cy.get('input[placeholder*="E-mail"], input[placeholder*="Email"], input[name="email"], input#email')
     .first()
@@ -44,7 +44,6 @@ describe('Agenda de contatos', () => {
     cy.contains(contatoRemover).should('exist')
 
     clicarBotaoContatoPorTexto(contatoEditar, /EDITAR/i)
-
     cy.get('input[placeholder*="Nome"], input[name="nome"], input#nome')
       .first()
       .clear()
@@ -57,7 +56,6 @@ describe('Agenda de contatos', () => {
       .first()
       .clear()
       .type('11911112222')
-
     cy.contains('button', /ADICIONAR|Salvar|Atualizar/i).click()
     cy.contains(contatoEditado).should('exist')
 
